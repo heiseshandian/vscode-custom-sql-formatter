@@ -14,6 +14,10 @@
     "onLanguage:sql"
   ],
   "main": "./dist/extension.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/heiseshandian/custom-sql-formatter"
+  },
   "contributes": {
     "configuration": {
       "type": "object",
