@@ -2,7 +2,7 @@
   "name": "custom-sql-formatter",
   "displayName": "custom-sql-formatter",
   "description": "a custom sql formatter",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "baymax",
   "engines": {
     "vscode": "^1.62.0"
