@@ -30,6 +30,7 @@ export function handleMaxLineLength(txt: string, maxLineLength: number) {
       isInMiddleOfSql = false;
       const sqls = convertTmpSqls(tmpSqls);
       finalLines.push(...sqls);
+      tmpSqls = [];
       return;
     }
     if (isInMiddleOfSql) {
