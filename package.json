@@ -16,7 +16,7 @@
   "main": "./dist/extension.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/heiseshandian/custom-sql-formatter"
+    "url": "https://github.com/heiseshandian/vscode-custom-sql-formatter"
   },
   "contributes": {
     "configuration": {

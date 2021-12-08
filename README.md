@@ -1,3 +1,3 @@
-# custom-sql-formatter
+# vscode-custom-sql-formatter
 
-Just a simple sql formatter for personal usage.
+Just a simple vscode extension for personal usage.
