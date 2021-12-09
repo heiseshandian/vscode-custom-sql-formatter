@@ -2,7 +2,7 @@
   "name": "custom-sql-formatter",
   "displayName": "custom-sql-formatter",
   "description": "a custom sql formatter",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "publisher": "baymax",
   "engines": {
     "vscode": "^1.62.0"
@@ -54,12 +54,6 @@
           "minimum": 1,
           "default": 80,
           "description": "Max line length"
-        },
-        "custom-sql-formatter.insertFinalNewline": {
-          "scope": "resource",
-          "type": "boolean",
-          "default": false,
-          "description": "Should we insert new line at the end of the file"
         }
       }
     }

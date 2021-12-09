@@ -1,4 +1,4 @@
-import { handleMaxLineLength, handleInsertFinalNewline } from "../utils";
+import { handleMaxLineLength } from "../utils";
 import { readFileSync } from "fs";
 import { resolve } from "path";
 import { EOL } from "os";
@@ -23,10 +23,5 @@ describe("extension", () => {
 
       expect(handleMaxLineLength(originalSql, 80)).toEqual(expectedSql);
     });
-  });
-
-  test("handleInsertFinalNewline", () => {
-    expect(handleInsertFinalNewline("", true)).toEqual("" + EOL);
-    expect(handleInsertFinalNewline("", false)).toEqual("");
   });
 });

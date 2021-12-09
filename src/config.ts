@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { handleInsertFinalNewline, handleMaxLineLength } from "./utils";
+import { handleMaxLineLength } from "./utils";
 
 export function getConfig({ insertSpaces, tabSize }: vscode.FormattingOptions) {
   return {
@@ -9,7 +9,6 @@ export function getConfig({ insertSpaces, tabSize }: vscode.FormattingOptions) {
     linesBetweenQueries: getSetting("linesBetweenQueries", 2),
 
     maxLineLength: getSetting("maxLineLength", 80),
-    insertFinalNewline: getSetting("insertFinalNewline", false),
   };
 }
 
@@ -36,10 +35,7 @@ export function applyConfig(originalTxt: string, config: any) {
   const handlers: Array<{
     key: string;
     handler: (txt: string, val: any) => string;
-  }> = [
-    { key: "maxLineLength", handler: handleMaxLineLength },
-    { key: "insertFinalNewline", handler: handleInsertFinalNewline },
-  ];
+  }> = [{ key: "maxLineLength", handler: handleMaxLineLength }];
 
   return handlers.reduce(
     (previousTxt, { key, handler }) => handler(previousTxt, config[key]),

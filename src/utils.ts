@@ -1,16 +1,5 @@
 import { EOL } from "os";
 
-export function handleInsertFinalNewline(
-  txt: string,
-  insertFinalNewline: boolean
-) {
-  if (!insertFinalNewline) {
-    return txt;
-  }
-
-  return txt + EOL;
-}
-
 export function handleMaxLineLength(txt: string, maxLineLength: number) {
   const lines = txt.split(EOL);
 
