@@ -1,4 +1,4 @@
-import { handleMaxLineLength } from "../utils";
+import { handleMaxLineLength, handleRemoveDoubleQuotes } from "../utils";
 import { readFileSync } from "fs";
 import { resolve } from "path";
 import { EOL } from "os";
@@ -23,5 +23,12 @@ describe("extension", () => {
 
       expect(handleMaxLineLength(originalSql, 80)).toEqual(expectedSql);
     });
+  });
+
+  test("handleRemoveDoubleQuotes", () => {
+    const original = 'select "field",fieldA from table; --just a "comment"';
+    const expected = 'select field,fieldA from table; --just a "comment"';
+
+    expect(handleRemoveDoubleQuotes(original, true)).toEqual(expected);
   });
 });

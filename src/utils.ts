@@ -1,13 +1,46 @@
 import { EOL } from "os";
+import { parse, ParsedLineType } from "./parser";
+
+export function handleRemoveDoubleQuotes(
+  txt: string,
+  removeDoubleQuotes: boolean
+) {
+  if (!removeDoubleQuotes) {
+    return txt;
+  }
+
+  const lines = parse(txt);
+
+  const finalLines = lines.map(({ type, line }) => {
+    if (
+      type === ParsedLineType.singleSql ||
+      type === ParsedLineType.startOfSql ||
+      type === ParsedLineType.middleOfSql ||
+      type === ParsedLineType.endOfSql
+    ) {
+      // For simplification, we ignore the case of writing multi-line comment syntax on one line.
+      // Such as /* this is comment */;
+      const firstIndexOfComment = line.indexOf("--");
+
+      if (firstIndexOfComment === -1) {
+        return line.replace(/"/g, "");
+      }
+
+      const comment = line.substring(firstIndexOfComment);
+      return line
+        .substring(0, firstIndexOfComment)
+        .replace(/"/g, "")
+        .concat(comment);
+    }
+    return line;
+  });
+
+  return finalLines.join(EOL);
+}
 
 export function handleMaxLineLength(txt: string, maxLineLength: number) {
-  const lines = txt.split(EOL);
-
+  const lines = parse(txt);
   const finalLines: string[] = [];
-
-  let isInMiddleOfSql = false;
-  let tmpSqls: string[] = [];
-  let isInMiddleOfComment = false;
 
   const convertTmpSqls = (sqls: string[]) => {
     const sql = sqls.join(" ").replace(/\s+/g, " ");
@@ -18,41 +51,21 @@ export function handleMaxLineLength(txt: string, maxLineLength: number) {
     return sqls;
   };
 
-  lines.forEach((line, i) => {
-    if (isStartOfSql(line)) {
-      tmpSqls = [];
-      isInMiddleOfSql = true;
+  let tmpSqls: string[] = [];
+  lines.forEach(({ type, line }) => {
+    if (type === ParsedLineType.startOfSql) {
+      tmpSqls = [line];
+      return;
     }
-    if (isInMiddleOfSql) {
+    if (type === ParsedLineType.middleOfSql) {
       tmpSqls.push(line);
+      return;
     }
-    if (isEndOfSql(line)) {
-      isInMiddleOfSql = false;
+    if (type === ParsedLineType.endOfSql) {
+      tmpSqls.push(line);
       const sqls = convertTmpSqls(tmpSqls);
       finalLines.push(...sqls);
       tmpSqls = [];
-      return;
-    }
-    if (isInMiddleOfSql) {
-      return;
-    }
-
-    if (isSingleLineComment(line)) {
-      finalLines.push(line);
-      return;
-    }
-
-    if (isStartOfMultiLineComment(line)) {
-      isInMiddleOfComment = true;
-    }
-    if (isInMiddleOfComment) {
-      finalLines.push(line);
-    }
-    if (isEndOfMultiLineComment(line)) {
-      isInMiddleOfComment = false;
-      return;
-    }
-    if (isInMiddleOfComment) {
       return;
     }
 
@@ -65,62 +78,4 @@ export function handleMaxLineLength(txt: string, maxLineLength: number) {
   }
 
   return finalLines.join(EOL);
-}
-
-function isStartOfMultiLineComment(line = "") {
-  const lineWithoutBlank = line.replace(/\s/g, "");
-  return /^\/\*[\s\S]*?/.test(lineWithoutBlank);
-}
-
-function isEndOfMultiLineComment(line = "") {
-  const lineWithoutBlank = line.replace(/\s/g, "");
-  return /[\s\S]*?\*\/$/.test(line);
-}
-
-function isSingleLineComment(line = "") {
-  const lineWithoutBlank = line.replace(/\s/g, "");
-
-  return (
-    /^--.*/.test(lineWithoutBlank) || /^\/\*[\s\S]*?\*\//.test(lineWithoutBlank)
-  );
-}
-
-function isEndOfSql(line = "") {
-  const lineWithoutComment = removeComment(line);
-  return lineWithoutComment.endsWith(";");
-}
-
-function removeComment(line = "") {
-  return line.replace(/--.*/, "").replace(/\/\*[\s\S]*?\*\//g, "");
-}
-
-function isStartOfSql(line = "") {
-  const reservedTopLevelWords = [
-    // "ADD",
-    // "AFTER",
-    "ALTER COLUMN",
-    "ALTER TABLE",
-    "DELETE FROM",
-    // "EXCEPT",
-    // "FETCH FIRST",
-    // "FROM",
-    // "GROUP BY",
-    // "GO",
-    // "HAVING",
-    "INSERT INTO",
-    "INSERT",
-    // "LIMIT",
-    "MODIFY",
-    // "ORDER BY",
-    "SELECT",
-    "SET CURRENT SCHEMA",
-    "SET SCHEMA",
-    "SET",
-    "UPDATE",
-    // "VALUES",
-    // "WHERE",
-  ];
-
-  const firstWord = line.split(/\s+/)[0].toUpperCase();
-  return reservedTopLevelWords.includes(firstWord);
 }

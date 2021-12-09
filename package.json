@@ -2,7 +2,7 @@
   "name": "custom-sql-formatter",
   "displayName": "custom-sql-formatter",
   "description": "a custom sql formatter",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "publisher": "baymax",
   "engines": {
     "vscode": "^1.62.0"
@@ -54,6 +54,12 @@
           "minimum": 1,
           "default": 80,
           "description": "Max line length"
+        },
+        "custom-sql-formatter.removeDoubleQuotes": {
+          "scope": "resource",
+          "type": "boolean",
+          "default": true,
+          "description": "Remove double quotes in sql (double quotes in comments will not be affected)"
         }
       }
     }

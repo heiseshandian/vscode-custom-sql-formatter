@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { handleMaxLineLength } from "./utils";
+import { handleMaxLineLength, handleRemoveDoubleQuotes } from "./utils";
 
 export function getConfig({ insertSpaces, tabSize }: vscode.FormattingOptions) {
   return {
@@ -9,6 +9,7 @@ export function getConfig({ insertSpaces, tabSize }: vscode.FormattingOptions) {
     linesBetweenQueries: getSetting("linesBetweenQueries", 2),
 
     maxLineLength: getSetting("maxLineLength", 80),
+    removeDoubleQuotes: getSetting("removeDoubleQuotes", true),
   };
 }
 
@@ -35,7 +36,10 @@ export function applyConfig(originalTxt: string, config: any) {
   const handlers: Array<{
     key: string;
     handler: (txt: string, val: any) => string;
-  }> = [{ key: "maxLineLength", handler: handleMaxLineLength }];
+  }> = [
+    { key: "maxLineLength", handler: handleMaxLineLength },
+    { key: "removeDoubleQuotes", handler: handleRemoveDoubleQuotes },
+  ];
 
   return handlers.reduce(
     (previousTxt, { key, handler }) => handler(previousTxt, config[key]),
