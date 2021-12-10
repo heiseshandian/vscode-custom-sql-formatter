@@ -26,8 +26,10 @@ describe("extension", () => {
   });
 
   test("handleRemoveDoubleQuotes", () => {
-    const original = 'select "field",fieldA from table; --just a "comment"';
-    const expected = 'select field,fieldA from table; --just a "comment"';
+    const original =
+      'select "field",fieldA from table; --just a "comment" /*just another "comment"*/';
+    const expected =
+      'select field,fieldA from table; --just a "comment" /*just another "comment"*/';
 
     expect(handleRemoveDoubleQuotes(original, true)).toEqual(expected);
   });

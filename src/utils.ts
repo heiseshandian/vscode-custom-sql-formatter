@@ -18,9 +18,7 @@ export function handleRemoveDoubleQuotes(
       type === ParsedLineType.middleOfSql ||
       type === ParsedLineType.endOfSql
     ) {
-      // For simplification, we ignore the case of writing multi-line comment syntax on one line.
-      // Such as /* this is comment */;
-      const firstIndexOfComment = line.indexOf("--");
+      const firstIndexOfComment = findFirstIndexOfComment(line);
 
       if (firstIndexOfComment === -1) {
         return line.replace(/"/g, "");
@@ -36,6 +34,21 @@ export function handleRemoveDoubleQuotes(
   });
 
   return finalLines.join(EOL);
+}
+
+const singleLineCommentToken = "--";
+const multiLineCommentToken = "/*";
+const commentTokenLen = singleLineCommentToken.length;
+
+function findFirstIndexOfComment(line: string) {
+  for (let i = 0, len = line.length; i < len - commentTokenLen; i++) {
+    const word = line.substring(i, i + commentTokenLen);
+    if (word === singleLineCommentToken || word === multiLineCommentToken) {
+      return i;
+    }
+  }
+
+  return -1;
 }
 
 export function handleMaxLineLength(txt: string, maxLineLength: number) {
