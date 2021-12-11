@@ -4,19 +4,24 @@ import { handleMaxLineLength, handleRemoveDoubleQuotes } from "./utils";
 export function getConfig({ insertSpaces, tabSize }: vscode.FormattingOptions) {
   return {
     indent: insertSpaces ? " ".repeat(tabSize) : "\t",
-    language: getSetting("dialect", "sql"),
-    uppercase: getSetting("uppercase", false),
-    linesBetweenQueries: getSetting("linesBetweenQueries", 2),
+    language: getSetting("dialect"),
+    uppercase: getSetting("uppercase"),
+    linesBetweenQueries: getSetting("linesBetweenQueries"),
 
-    maxLineLength: getSetting("maxLineLength", 80),
-    removeDoubleQuotes: getSetting("removeDoubleQuotes", true),
+    maxLineLength: getSetting("maxLineLength"),
+    removeDoubleQuotes: getSetting("removeDoubleQuotes"),
   };
 }
 
-function getSetting(key: string, def: any) {
+function getSetting(key: string) {
   const section = "custom-sql-formatter";
+  const setting = vscode.workspace.getConfiguration(section, null).get(key);
+  const languageSetting = getLanguageSpecificSetting(section, key);
 
-  const settings = vscode.workspace.getConfiguration(section, null);
+  return languageSetting !== undefined ? languageSetting : setting;
+}
+
+function getLanguageSpecificSetting(section: string, key: string) {
   const editor = vscode.window.activeTextEditor;
   const language = editor && editor.document && editor.document.languageId;
   const languageSettings =
@@ -24,12 +29,9 @@ function getSetting(key: string, def: any) {
     vscode.workspace
       .getConfiguration(undefined, null)
       .get<Record<string, any>>(`[${language}]`);
+  const value = languageSettings && languageSettings[`${section}.${key}`];
 
-  let value = languageSettings && languageSettings[`${section}.${key}`];
-  if (value === undefined) {
-    value = settings.get(key, def);
-  }
-  return value === undefined ? def : value;
+  return value;
 }
 
 export function applyConfig(originalTxt: string, config: any) {
