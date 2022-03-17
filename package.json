@@ -1,8 +1,8 @@
 {
-  "name": "custom-sql-formatter",
-  "displayName": "custom-sql-formatter",
-  "description": "a custom sql formatter",
-  "version": "0.1.5",
+  "name": "vscode-custom-sql-formatter",
+  "displayName": "Customized SQL Formatter",
+  "description": "a customized SQL formatter",
+  "version": "0.1.6",
   "publisher": "baymax",
   "engines": {
     "vscode": "^1.62.0"
